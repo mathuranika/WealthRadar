@@ -1,1 +1,42 @@
-<p>header works!</p>
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="navbar__inner">
+    <a class="navbar__brand" routerLink="/">
+      <span class="navbar__logo-mark" aria-hidden="true"></span>
+      <div class="navbar__brand-text">
+        <span class="navbar__title">WealthRadar</span>
+        <span class="navbar__sub">Autonomous Portfolio Intelligence</span>
+      </div>
+    </a>
+
+    <ul class="navbar__links" [class.open]="menuOpen" role="list">
+      <li *ngFor="let item of navItems">
+        
+          class="navbar__link"
+          [routerLink]="item.path"
+          routerLinkActive="active"
+          (click)="menuOpen = false"
+        >
+          <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+          {{ item.label }}
+      </li>
+    </ul>
+
+    <div class="navbar__actions">
+      <button class="navbar__cta" routerLink="/upload">
+        <i class="ti ti-upload" aria-hidden="true"></i>
+        Upload
+      </button>
+      <button
+        class="navbar__hamburger"
+        [class.active]="menuOpen"
+        (click)="toggleMenu()"
+        [attr.aria-expanded]="menuOpen"
+        aria-label="Toggle navigation"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+  </div>
+</nav>
