@@ -1,1 +1,25 @@
-<p>upload works!</p>
+<div class="upload-container">
+
+  <h2>Upload Portfolio</h2>
+
+  <p class="subtitle">
+    Upload your Groww or Zerodha portfolio and let
+    WealthRadar analyse market risk, sentiment,
+    and portfolio intelligence.
+</p>
+
+  <input
+    type="file"
+    accept=".csv"
+    (change)="onFileSelected($event)"
+  />
+
+  <button
+    [disabled]="!selectedFile"
+    (click)="uploadPortfolio()">
+
+    Analyse Portfolio
+
+  </button>
+
+</div>
