@@ -1,25 +1,91 @@
-<div class="upload-container">
+<div class="upload-wrapper">
+  <div class="upload-card">
 
-  <h2>Upload Portfolio</h2>
+    <div class="upload-card__header">
+      <div class="upload-card__icon-wrap" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="8" y1="13" x2="16" y2="13"/>
+          <line x1="8" y1="17" x2="16" y2="17"/>
+          <line x1="8" y1="9" x2="10" y2="9"/>
+        </svg>
+      </div>
+      <div>
+        <h2 class="upload-card__title">Upload Portfolio</h2>
+        <p class="upload-card__subtitle">
+          Upload your Groww portfolio and let WealthRadar analyse
+          market risk, sentiment, and portfolio intelligence.
+        </p>
+      </div>
+    </div>
 
-  <p class="subtitle">
-    Upload your Groww or Zerodha portfolio and let
-    WealthRadar analyse market risk, sentiment,
-    and portfolio intelligence.
-</p>
+    <div
+      class="upload-dropzone"
+      [class.has-file]="selectedFile"
+      [class.drag-over]="isDragging"
+      (dragover)="onDragOver($event)"
+      (dragleave)="onDragLeave()"
+      (drop)="onDrop($event)"
+      (click)="fileInput.click()"
+      role="button"
+      tabindex="0"
+      (keydown.enter)="fileInput.click()"
+      aria-label="Upload CSV file"
+    >
+      <input
+        #fileInput
+        type="file"
+        accept=".csv"
+        (change)="onFileSelected($event)"
+        class="upload-dropzone__input"
+      />
 
-  <input
-    type="file"
-    accept=".csv"
-    (change)="onFileSelected($event)"
-  />
+      <ng-container *ngIf="!selectedFile">
+        <svg class="upload-dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
+          <path d="M12 12v9"/>
+          <path d="m16 16-4-4-4 4"/>
+        </svg>
+        <p class="upload-dropzone__text">Drag & drop your CSV here</p>
+        <p class="upload-dropzone__hint">or click to browse — .csv files only</p>
+      </ng-container>
 
-  <button
-    [disabled]="!selectedFile"
-    (click)="uploadPortfolio()">
+      <ng-container *ngIf="selectedFile">
+        <svg class="upload-dropzone__icon is-ready" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <path d="m9 15 2 2 4-4"/>
+        </svg>
+        <p class="upload-dropzone__text is-ready">{{ selectedFile.name }}</p>
+        <p class="upload-dropzone__hint">
+          {{ (selectedFile.size / 1024).toFixed(1) }} KB &nbsp;·&nbsp; Click to change
+        </p>
+      </ng-container>
+    </div>
 
-    Analyse Portfolio
+    <div class="upload-card__footer">
+      <div class="upload-supported">
+        <span class="upload-supported__label">Supported brokers</span>
+        <span class="upload-supported__badge">Groww</span>
+      </div>
 
-  </button>
+      <button
+        class="upload-btn"
+        [class.is-loading]="isLoading"
+        [disabled]="!selectedFile || isLoading"
+        (click)="uploadPortfolio()"
+      >
+        <i class="ti ti-chart-dots-3" aria-hidden="true"></i>
+        <span>{{ isLoading ? 'Analysing…' : 'Analyse Portfolio' }}</span>
+        <span *ngIf="isLoading" class="upload-btn__spinner" aria-hidden="true"></span>
+      </button>
+    </div>
 
+    <div *ngIf="errorMessage" class="upload-error" role="alert">
+      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+      {{ errorMessage }}
+    </div>
+
+  </div>
 </div>

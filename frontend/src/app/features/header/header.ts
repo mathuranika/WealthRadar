@@ -1,3 +1,4 @@
+import { CommonModule} from '@angular/common';
 import {
   Component,
   OnInit,
@@ -6,6 +7,7 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 interface NavItem {
   label: string;
@@ -18,6 +20,8 @@ interface NavItem {
   templateUrl: './header.html',
   styleUrls: ['./header.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
+  standalone: true,
+  imports: [CommonModule,RouterLink]
 })
 export class Header implements OnInit, OnDestroy {
   menuOpen = false;
@@ -25,8 +29,8 @@ export class Header implements OnInit, OnDestroy {
 
   navItems: NavItem[] = [
     { label: 'Dashboard', path: '/dashboard', icon: 'ti-layout-dashboard' },
-    { label: 'Analytics',  path: '/analytics',  icon: 'ti-chart-line'        },
-    { label: 'Insights',   path: '/insights',   icon: 'ti-bulb'              },
+    { label: 'Analytics',  path: '/analytics',  icon: 'ti-chart-line'},
+    { label: 'Insights',   path: '/insights',   icon: 'ti-bulb'},
   ];
 
   constructor(private cdr: ChangeDetectorRef) {}

@@ -10,22 +10,19 @@
 
     <ul class="navbar__links" [class.open]="menuOpen" role="list">
       <li *ngFor="let item of navItems">
-        
+        <a
           class="navbar__link"
           [routerLink]="item.path"
           routerLinkActive="active"
           (click)="menuOpen = false"
         >
-          <i class="ti {{ item.icon }}" aria-hidden="true"></i>
-          {{ item.label }}
+            <i class="ti {{ item.icon }}" aria-hidden="true"></i>
+            {{ item.label }}
+        </a>
       </li>
     </ul>
 
     <div class="navbar__actions">
-      <button class="navbar__cta" routerLink="/upload">
-        <i class="ti ti-upload" aria-hidden="true"></i>
-        Upload
-      </button>
       <button
         class="navbar__hamburger"
         [class.active]="menuOpen"
