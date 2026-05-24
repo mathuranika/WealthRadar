@@ -1,4 +1,4 @@
-<section class="page">
+<!-- <section class="page">
   <div class="hero">
     <div>
       <p class="eyebrow">Groww-native reasoning layer</p>
@@ -59,45 +59,6 @@
   </div>
 
   <article class="panel">
-    <div class="panel__head">
-      <div>
-        <p class="eyebrow">True exposure</p>
-        <h2>Direct + Mutual Fund Overlap</h2>
-      </div>
-    </div>
-
-    <div *ngIf="portfolio.exposures().length; else emptyExposure" class="table-wrap">
-      <table>
-        <thead>
-          <tr>
-            <th>Stock</th>
-            <th>Direct</th>
-            <th>MF</th>
-            <th>Combined</th>
-            <th>Risk note</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let item of portfolio.exposures()" [class.attention]="item.totalPct > 10">
-            <td>
-              <strong>{{ item.company }}</strong>
-              <span>{{ item.symbol }}</span>
-            </td>
-            <td>{{ item.directPct }}%</td>
-            <td>{{ item.mfPct }}%</td>
-            <td>{{ item.totalPct }}%</td>
-            <td>{{ item.note }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <ng-template #emptyExposure>
-      <div class="empty">Overlap rows will render when the portfolio service returns exposure data.</div>
-    </ng-template>
-  </article>
-
-  <article class="panel">
     <p class="eyebrow">This week</p>
     <h2>Proactive Concern Summary</h2>
     <div *ngIf="portfolio.concerns().length; else emptyConcerns" class="concerns">
@@ -110,4 +71,243 @@
       <div class="empty">Weekly concerns will appear after the reasoning service produces them.</div>
     </ng-template>
   </article>
+</section> -->
+
+<section class="page">
+
+  <div class="hero">
+
+    <div>
+
+      <p class="eyebrow">
+        Groww-native reasoning layer
+      </p>
+
+      <h1>
+        Upload your Groww reports.
+        Ask your portfolio anything.
+      </h1>
+
+      <p class="hero__copy">
+        WealthRadar is a frontend shell for portfolio reasoning across uploads,
+        pipeline status, portfolio health, weekly concerns,
+        and conversational analysis.
+      </p>
+
+    </div>
+
+    <div
+      class="hero__panel"
+      aria-label="Portfolio connection status"
+    >
+
+      <span
+        class="status-dot"
+        [class.active]="portfolioData"
+      ></span>
+
+      <div>
+
+        <strong>
+
+          {{
+            portfolioData
+            ? 'Portfolio data loaded'
+            : 'Awaiting portfolio data'
+          }}
+
+        </strong>
+
+        <small>
+
+          {{
+            portfolioData
+            ? (portfolioData.holdings?.length || 0)+' holdings parsed successfully.'
+            : 'Upload reports or connect the API service.'
+          }}
+
+        </small>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <app-upload></app-upload>
+
+  <div class="grid">
+
+    <article class="panel">
+
+      <div class="panel__head">
+
+        <div>
+
+          <p class="eyebrow">
+            Pipeline
+          </p>
+
+          <h2>
+            Parsing Status
+          </h2>
+
+        </div>
+
+      </div>
+
+      <div
+        *ngIf="portfolioData; else emptyPipeline"
+        class="timeline"
+      >
+
+        <div class="timeline__item">
+
+          <span></span>
+
+          <div>
+
+            <strong>
+              Excel parsed successfully
+            </strong>
+
+            <p>
+
+              {{
+                portfolioData.holdings?.length || 0
+              }}
+
+              holdings loaded from upload pipeline.
+
+            </p>
+
+          </div>
+
+          <em>OK</em>
+
+        </div>
+
+      </div>
+
+      <ng-template #emptyPipeline>
+
+        <div class="empty">
+
+          Pipeline results will appear here after the upload/data service returns parsed report status.
+
+        </div>
+
+      </ng-template>
+
+    </article>
+
+    <article class="panel">
+
+      <p class="eyebrow">
+        AI health card
+      </p>
+
+      <h2>
+        Portfolio Health Summary
+      </h2>
+
+      <p
+        *ngIf="portfolioData; else emptyHealth"
+        class="summary"
+      >
+
+        Invested:
+        ₹{{ portfolioData.summary?.invested }}
+
+        <br>
+
+        Current Value:
+        ₹{{ portfolioData.summary?.current_value }}
+
+        <br>
+
+        PnL:
+        ₹{{ portfolioData.summary?.pnl }}
+
+        <br>
+
+        XIRR:
+        {{ portfolioData.summary?.xirr }}
+
+      </p>
+
+      <ng-template #emptyHealth>
+
+        <div class="empty">
+
+          No health summary is available yet.
+
+        </div>
+
+      </ng-template>
+
+    </article>
+
+  </div>
+
+  <article class="panel">
+
+    <p class="eyebrow">
+      This week
+    </p>
+
+    <h2>
+      Proactive Concern Summary
+    </h2>
+
+    <div
+      *ngIf="portfolioData; else emptyConcerns"
+      class="concerns"
+    >
+
+      <div class="concern medium">
+
+        <strong>
+          Portfolio Snapshot
+        </strong>
+
+        <p>
+
+          Holdings:
+          {{
+            portfolioData.holdings?.length || 0
+          }}
+
+          ·
+
+          XIRR:
+          {{
+            portfolioData.summary?.xirr
+          }}
+
+          ·
+
+          Current Value:
+          ₹{{
+            portfolioData.summary?.current_value
+          }}
+
+        </p>
+
+      </div>
+
+    </div>
+
+    <ng-template #emptyConcerns>
+
+      <div class="empty">
+
+        Weekly concerns will appear after the reasoning service produces them.
+
+      </div>
+
+    </ng-template>
+
+  </article>
+
 </section>

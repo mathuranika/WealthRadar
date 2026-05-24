@@ -1,129 +1,66 @@
-import { HttpClient } from '@angular/common/http';
-import { Injectable, computed, signal } from '@angular/core';
+import { Injectable,signal } from '@angular/core';
+import { BehaviorSubject } from 'rxjs';
 
-export interface PipelineStep {
-  label: string;
-  status: 'complete' | 'warning';
-  detail: string;
-  count: string;
-}
+@Injectable({providedIn:'root'})
+export class PortfolioService{
 
-export interface Exposure {
-  symbol: string;
-  company: string;
-  directPct: number;
-  mfPct: number;
-  totalPct: number;
-  note: string;
-}
+  private portfolioSubject=new BehaviorSubject<any>(null);
+  portfolio$=this.portfolioSubject.asObservable();
+  private data=signal<any>(null);
 
-export interface Holding {
-  symbol: string;
-  name: string;
-  sector: string;
-  value: number;
-  pnlPct: number;
-  dayChangePct: number;
-}
-
-export interface Concern {
-  title: string;
-  detail: string;
-  severity: 'high' | 'medium' | 'low';
-}
-
-export interface ChatMessage {
-  role: 'user' | 'assistant';
-  text: string;
-}
-
-export interface Benchmark {
-  name: string;
-  finalValue: number;
-  returnPct: number;
-  cagr: number;
-}
-
-export interface SipVerdict {
-  fund: string;
-  monthlyAmount: number;
-  actualXirr: number;
-  niftyXirr: number;
-  verdict: string;
-}
-
-@Injectable({ providedIn: 'root' })
-export class PortfolioService {
-  private readonly apiRoot = '/api';
-
-  readonly loading = signal(false);
-  readonly error = signal('');
-  readonly pipeline = signal<PipelineStep[]>([]);
-  readonly holdings = signal<Holding[]>([]);
-  readonly exposures = signal<Exposure[]>([]);
-  readonly concerns = signal<Concern[]>([]);
-  readonly chat = signal<ChatMessage[]>([]);
-  readonly benchmarks = signal<Benchmark[]>([]);
-  readonly sips = signal<SipVerdict[]>([]);
-  readonly healthSummary = signal('');
-  readonly macroImpact = signal('');
-  readonly simulationSummary = signal('');
-  readonly hasPortfolio = computed(() => this.pipeline().length > 0 || this.holdings().length > 0);
-
-  constructor(private http: HttpClient) {}
-
-  loadPortfolio(): void {
-    this.loading.set(true);
-    this.error.set('');
-
-    this.http.get<{
-      pipeline?: PipelineStep[];
-      holdings?: Holding[];
-      exposures?: Exposure[];
-      concerns?: Concern[];
-      benchmarks?: Benchmark[];
-      sips?: SipVerdict[];
-      healthSummary?: string;
-      simulationSummary?: string;
-    }>(`${this.apiRoot}/portfolio`).subscribe({
-      next: (portfolio) => {
-        this.pipeline.set(portfolio.pipeline ?? []);
-        this.holdings.set(portfolio.holdings ?? []);
-        this.exposures.set(portfolio.exposures ?? []);
-        this.concerns.set(portfolio.concerns ?? []);
-        this.benchmarks.set(portfolio.benchmarks ?? []);
-        this.sips.set(portfolio.sips ?? []);
-        this.healthSummary.set(portfolio.healthSummary ?? '');
-        this.simulationSummary.set(portfolio.simulationSummary ?? '');
-        this.loading.set(false);
-      },
-      error: () => {
-        this.error.set('Portfolio data is not available yet. Upload reports or connect the data service.');
-        this.loading.set(false);
-      }
-    });
+  setPortfolio(data:any){
+    this.data.set(data);
+    this.portfolioSubject.next(data);
   }
 
-  askPortfolio(question: string): void {
-    const trimmed = question.trim();
-    if (!trimmed) {
-      return;
-    }
+  hasPortfolio(){return !!this.data();}
+  loading(){return false;}
+  loadPortfolio(){}
 
-    this.chat.update((messages) => [...messages, { role: 'user', text: trimmed }]);
+  holdings():any[]{return this.data()?.holdings||[];}
 
-    this.http.post<ChatMessage>(`${this.apiRoot}/chat`, { question: trimmed }).subscribe({
-      next: (message) => this.chat.update((messages) => [...messages, message]),
-      error: () => {
-        this.error.set('Portfolio chat is waiting for a connected reasoning service.');
-      }
-    });
+  pipeline():any[]{
+    if(!this.data())return[];
+    return [{
+      label:'Excel Parsed',
+      detail:`${this.holdings().length} holdings loaded`,
+      count:'OK',
+      status:'success'
+    }];
   }
 
-  loadMacroImpact(): void {
-    this.http.get<{ impact: string }>(`${this.apiRoot}/macro-impact`).subscribe({
-      next: (response) => this.macroImpact.set(response.impact ?? ''),
-      error: () => this.error.set('Macro impact analysis is waiting for a connected market news service.')
-    });
+  healthSummary():string{
+    if(!this.data())return'';
+    const s=this.data().summary;
+    return `Invested ₹${s?.invested} | Current ₹${s?.current_value} | PnL ₹${s?.pnl}`;
   }
+
+  concerns():any[]{
+    if(!this.data())return[];
+    return [{
+      title:'Portfolio Snapshot',
+      detail:`XIRR ${this.data()?.summary?.xirr}`,
+      severity:'medium'
+    }];
+  }
+
+  chat():any[]{return[];}
+  askPortfolio(question:string){}
+
+  macroImpact():string{return'';}
+  loadMacroImpact(){}
+
+  exposures():any[]{return[];}
+
+  benchmarks():any[]{
+    return [];
+  }
+
+  sips():any[]{
+    return [];
+  }
+
+  simulationSummary():string{return'';}
+  error():string{return'';}
+
 }

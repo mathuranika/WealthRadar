@@ -1,6 +1,8 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ApiService } from '../../core/services/api';
+import { PortfolioService } from '../../core/services/portfolio';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-upload',
@@ -10,18 +12,28 @@ import { ApiService } from '../../core/services/api';
   styleUrl: './upload.scss',
 })
 export class UploadComponent {
+
   selectedFiles: File[] = [];
   isLoading = false;
   errorMessage = '';
   isDragging = false;
 
-  constructor(private apiService: ApiService) {}
+  uploadResponse:any=null;
+
+  constructor(
+    private apiService:ApiService,
+    private portfolioService:PortfolioService,
+    private cdr:ChangeDetectorRef
+  ){}
 
   onFileSelected(event: Event): void {
+
     const input = event.target as HTMLInputElement;
+
     if (input.files?.length) {
       this.setFiles(Array.from(input.files));
     }
+
   }
 
   onDragOver(event: DragEvent): void {
@@ -34,56 +46,92 @@ export class UploadComponent {
   }
 
   onDrop(event: DragEvent): void {
+
     event.preventDefault();
+
     this.isDragging = false;
-    const files = Array.from(event.dataTransfer?.files ?? []);
+
+    const files =
+      Array.from(
+        event.dataTransfer?.files ?? []
+      );
+
     if (files.length) {
       this.setFiles(files);
     }
+
   }
 
   private setFiles(files: File[]): void {
-    const validFiles = files.filter((file) => this.isSupported(file));
+
+    const validFiles =
+      files.filter(
+        (file) => this.isSupported(file)
+      );
 
     if (validFiles.length !== files.length) {
-      this.errorMessage = 'Upload CSV or PDF reports only.';
+
+      this.errorMessage =
+        'Upload Excel reports only (.xlsx or .xls).';
+
       return;
     }
 
     if (validFiles.length > 3) {
-      this.errorMessage = 'Upload up to 3 Groww reports.';
+
+      this.errorMessage =
+        'Upload up to 3 Groww reports.';
+
       return;
     }
 
     this.selectedFiles = validFiles;
     this.errorMessage = '';
+
   }
 
   private isSupported(file: File): boolean {
-    const name = file.name.toLowerCase();
-    return name.endsWith('.csv') || name.endsWith('.pdf');
+
+    const name =
+      file.name.toLowerCase();
+
+    return (
+      name.endsWith('.xlsx') ||
+      name.endsWith('.xls')
+    );
+
   }
 
   removeFile(fileToRemove: File): void {
-    this.selectedFiles = this.selectedFiles.filter((file) => file !== fileToRemove);
+
+    this.selectedFiles =
+      this.selectedFiles.filter(
+        (file) =>
+          file !== fileToRemove
+      );
+
   }
 
-  uploadPortfolio(): void {
-    if (!this.selectedFiles.length) return;
+  uploadPortfolio():void{
+  if(!this.selectedFiles.length)return;
 
-    this.isLoading = true;
-    this.errorMessage = '';
+  this.isLoading=true;
+  this.errorMessage='';
 
-    this.apiService.uploadReports(this.selectedFiles).subscribe({
-      next: (response) => {
-        this.isLoading = false;
-        console.log('Upload success:', response);
-      },
-      error: (error) => {
-        this.isLoading = false;
-        this.errorMessage = 'Upload failed. Please check your file and try again.';
-        console.error('Upload failed:', error);
-      },
-    });
-  }
+  const file=this.selectedFiles[0];
+
+  this.apiService.uploadPortfolio(file).subscribe({
+    next:(response)=>{
+      setTimeout(()=>{this.portfolioService.setPortfolio(response);});
+      this.isLoading=false;
+      this.cdr.detectChanges();
+    },
+    error:(error)=>{
+      console.error(error);
+      this.isLoading=false;
+      this.cdr.detectChanges();
+    }
+  });
+}
+
 }

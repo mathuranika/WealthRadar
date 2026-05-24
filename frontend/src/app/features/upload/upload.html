@@ -30,7 +30,7 @@
       <input
         #fileInput
         type="file"
-        accept=".csv,.pdf"
+        accept=".xlsx,.xls"
         multiple
         (change)="onFileSelected($event)"
         class="upload-dropzone__input"
@@ -38,8 +38,8 @@
 
       <ng-container *ngIf="!selectedFiles.length">
         <i class="ti ti-file-upload upload-dropzone__icon" aria-hidden="true"></i>
-        <p class="upload-dropzone__text">Drag & drop your CSV here</p>
-        <p class="upload-dropzone__hint">or click to browse CSV/PDF reports, maximum 3 files</p>
+        <p class="upload-dropzone__text">Drag & drop your Groww MF holdings report here</p>
+        <p class="upload-dropzone__hint">or click to browse XLSX/XLS reports/p>
       </ng-container>
 
       <ng-container *ngIf="selectedFiles.length">

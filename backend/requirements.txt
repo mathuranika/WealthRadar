@@ -1,0 +1,10 @@
+fastapi
+uvicorn
+python-multipart
+pandas
+yfinance
+requests
+google-generativeai
+python-dotenv
+numpy
+plotly

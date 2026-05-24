@@ -1,22 +1,18 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ApiService {
+  private baseUrl = 'http://127.0.0.1:8001';
 
-  private baseUrl =
-    '/api';
+  constructor(private http: HttpClient) {}
 
-  constructor(
-    private http: HttpClient
-  ) {}
+  uploadPortfolio(file: File): Observable<any> {
 
-  uploadCSV(file: File) {
-
-    const formData =
-      new FormData();
+    const formData = new FormData();
 
     formData.append(
       'file',
@@ -27,26 +23,13 @@ export class ApiService {
       `${this.baseUrl}/upload`,
       formData
     );
-
   }
 
-  uploadReports(files: File[]) {
-
-    const formData =
-      new FormData();
-
-    files.forEach((file) => {
-      formData.append(
-        'files',
-        file
-      );
-    });
+  chat(question: string): Observable<any> {
 
     return this.http.post(
-      `${this.baseUrl}/upload`,
-      formData
+      `${this.baseUrl}/chat`,
+      { question }
     );
-
   }
-
 }
