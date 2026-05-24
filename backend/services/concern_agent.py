@@ -4,36 +4,26 @@ from services.gemini_service import model
 def generate_concerns(summary,holdings):
 
     prompt=f"""
-You are a portfolio concern agent.
+    Portfolio summary:
+    {summary}
 
-Portfolio summary:
-{summary}
+    Holdings:
+    {holdings}
 
-Holdings:
-{holdings}
+    Generate realistic portfolio concerns.
 
-Find REAL investment concerns.
+    Return ONLY valid JSON list.
 
-Check:
-- diversification
-- concentration risk
-- lack of debt exposure
-- geographic exposure
-- volatility clues
-- excessive equity dependence
+    Example:
 
-Return ONLY VALID JSON.
-
-Example:
-
-[
- {
-  "title":"High Equity Concentration",
-  "detail":"Portfolio is heavily concentrated in Indian equities.",
-  "severity":"warning"
- }
-]
-"""
+    [
+      {{
+        "title":"High Equity Concentration",
+        "detail":"Portfolio is heavily concentrated in Indian equities.",
+        "severity":"warning"
+      }}
+    ]
+    """
 
     try:
 
