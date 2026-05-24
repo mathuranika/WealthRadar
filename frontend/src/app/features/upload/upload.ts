@@ -113,6 +113,7 @@ export class UploadComponent {
   }
 
   uploadPortfolio():void{
+
   if(!this.selectedFiles.length)return;
 
   this.isLoading=true;
@@ -121,17 +122,34 @@ export class UploadComponent {
   const file=this.selectedFiles[0];
 
   this.apiService.uploadPortfolio(file).subscribe({
-    next:(response)=>{
-      setTimeout(()=>{this.portfolioService.setPortfolio(response);});
+
+    next:(response:any)=>{
+
+      this.portfolioService.setPortfolio({
+        summary:response.summary,
+        holdings:response.holdings,
+        alerts:response.alerts,
+        analysis:response.analysis,
+        concerns:response.concerns||[]
+      });
+
       this.isLoading=false;
-      this.cdr.detectChanges();
+
     },
+
     error:(error)=>{
+
       console.error(error);
+
+      this.errorMessage=
+        'Upload failed. Please try again.';
+
       this.isLoading=false;
-      this.cdr.detectChanges();
+
     }
+
   });
+
 }
 
 }

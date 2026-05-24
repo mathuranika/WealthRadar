@@ -6,6 +6,7 @@ from services.parser_service import parse_groww_file
 from services.context_service import build_context
 from services.alert_service import generate_alerts
 from services.gemini_service import analyze_portfolio
+from services.concern_agent import generate_concerns
 
 router = APIRouter()
 
@@ -60,6 +61,21 @@ async def upload_file(
             "alerts": alerts
         }
     )
+    
+    # AI concern agent
+
+    try:
+
+        concerns = generate_concerns(
+            summary=context["summary"],
+            holdings=context["holdings"]
+        )
+
+    except Exception as e:
+
+        print("CONCERN AGENT ERROR:",e)
+
+        concerns = []
 
     # runtime session cache
     request.app.state.current_context = {
@@ -69,13 +85,15 @@ async def upload_file(
     }
 
     request.app.state.current_file = safe_path
-
+    
+    print("CONCERNS:",concerns)
     return {
-        "message": "upload successful",
-        "filename": file.filename,
-        "saved_file": safe_path,
-        "summary": context["summary"],
-        "holdings": context["holdings"],
-        "alerts": alerts,
-        "analysis": analysis
+        "message":"upload successful",
+        "filename":file.filename,
+        "saved_file":safe_path,
+        "summary":context["summary"],
+        "holdings":context["holdings"],
+        "alerts":alerts,
+        "analysis":analysis,
+        "concerns":concerns
     }

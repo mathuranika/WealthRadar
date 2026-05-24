@@ -1,7 +1,6 @@
-import { Injectable,signal } from '@angular/core';
-import { BehaviorSubject } from 'rxjs';
-import { inject } from '@angular/core';
-import { ApiService } from './api';
+import {Injectable,signal,inject} from '@angular/core';
+import {BehaviorSubject} from 'rxjs';
+import {ApiService} from './api';
 
 @Injectable({providedIn:'root'})
 export class PortfolioService{
@@ -9,43 +8,63 @@ export class PortfolioService{
   private api=inject(ApiService);
   private messages=signal<any[]>([]);
   private portfolioSubject=new BehaviorSubject<any>(null);
-  portfolio$=this.portfolioSubject.asObservable();
-  private data=signal<any>(null);
 
-  setPortfolio(data:any){
-    this.data.set(data);
-    this.portfolioSubject.next(data);
+  portfolio$=this.portfolioSubject.asObservable();
+
+  private data=signal<any>(null);
+  private concernsSignal=signal<any[]>([]);
+
+  setPortfolio(response:any){
+
+    this.data.set(response);
+
+    this.concernsSignal.set(
+      response.concerns||[]
+    );
+
+    this.portfolioSubject.next(response);
+
   }
 
-  hasPortfolio(){return !!this.data();}
-  loading(){return false;}
+  hasPortfolio(){
+    return !!this.data();
+  }
+
+  loading(){
+    return false;
+  }
+
   loadPortfolio(){}
 
-  holdings():any[]{return this.data()?.holdings||[];}
+  holdings():any[]{
+    return this.data()?.holdings||[];
+  }
 
   pipeline():any[]{
+
     if(!this.data())return[];
-    return [{
+
+    return[{
       label:'Excel Parsed',
       detail:`${this.holdings().length} holdings loaded`,
       count:'OK',
       status:'success'
     }];
+
   }
 
   healthSummary():string{
+
     if(!this.data())return'';
-    const s=this.data().summary;
+
+    const s=this.data()?.summary;
+
     return `Invested ₹${s?.invested} | Current ₹${s?.current_value} | PnL ₹${s?.pnl}`;
+
   }
 
   concerns():any[]{
-    if(!this.data())return[];
-    return [{
-      title:'Portfolio Snapshot',
-      detail:`XIRR ${this.data()?.summary?.xirr}`,
-      severity:'medium'
-    }];
+    return this.concernsSignal();
   }
 
   chat():any[]{
@@ -66,8 +85,6 @@ export class PortfolioService{
       holdings:Array.isArray(this.holdings())?this.holdings():[],
       summary:this.data()?.summary||{}
     };
-
-    console.log('CHAT PAYLOAD',payload);
 
     this.api.chat(payload).subscribe({
 
@@ -101,20 +118,34 @@ export class PortfolioService{
 
   }
 
-  macroImpact():string{return'';}
+  macroImpact():string{
+    return'';
+  }
+
   loadMacroImpact(){}
 
-  exposures():any[]{return[];}
+  exposures():any[]{
+    return[];
+  }
 
   benchmarks():any[]{
-    return [];
+    return[];
+  }
+
+  getData(){
+    return this.data();
   }
 
   sips():any[]{
-    return [];
+    return[];
   }
 
-  simulationSummary():string{return'';}
-  error():string{return'';}
+  simulationSummary():string{
+    return'';
+  }
+
+  error():string{
+    return'';
+  }
 
 }
