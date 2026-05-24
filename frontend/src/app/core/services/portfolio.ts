@@ -1,9 +1,13 @@
 import { Injectable,signal } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import { inject } from '@angular/core';
+import { ApiService } from './api';
 
 @Injectable({providedIn:'root'})
 export class PortfolioService{
 
+  private api=inject(ApiService);
+  private messages=signal<any[]>([]);
   private portfolioSubject=new BehaviorSubject<any>(null);
   portfolio$=this.portfolioSubject.asObservable();
   private data=signal<any>(null);
@@ -44,8 +48,58 @@ export class PortfolioService{
     }];
   }
 
-  chat():any[]{return[];}
-  askPortfolio(question:string){}
+  chat():any[]{
+    return this.messages();
+  }
+
+  askPortfolio(question:string){
+
+    if(!question.trim())return;
+
+    this.messages.update(m=>[
+      ...m,
+      {role:'user',text:question}
+    ]);
+
+    const payload={
+      question:question,
+      holdings:Array.isArray(this.holdings())?this.holdings():[],
+      summary:this.data()?.summary||{}
+    };
+
+    console.log('CHAT PAYLOAD',payload);
+
+    this.api.chat(payload).subscribe({
+
+      next:(response:any)=>{
+
+        this.messages.update(m=>[
+          ...m,
+          {
+            role:'assistant',
+            text:response.answer
+          }
+        ]);
+
+      },
+
+      error:(err)=>{
+
+        console.error('CHAT ERROR',err);
+
+        this.messages.update(m=>[
+          ...m,
+          {
+            role:'assistant',
+            text:'Unable to analyse portfolio right now.'
+          }
+        ]);
+
+      }
+
+    });
+
+  }
 
   macroImpact():string{return'';}
   loadMacroImpact(){}

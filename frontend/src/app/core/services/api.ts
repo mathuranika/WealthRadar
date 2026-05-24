@@ -25,11 +25,16 @@ export class ApiService {
     );
   }
 
-  chat(question: string): Observable<any> {
-
+  chat(payload:any){
     return this.http.post(
-      `${this.baseUrl}/chat`,
-      { question }
+      'http://127.0.0.1:8001/chat',
+      payload,
+      {
+        headers:{
+          'Content-Type':'application/json'
+        }
+      }
     );
   }
+
 }

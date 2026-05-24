@@ -1,56 +1,61 @@
 import os
 import google.generativeai as genai
-from dotenv import (load_dotenv)
+from dotenv import load_dotenv
 
 load_dotenv()
 
 genai.configure(
-
-    api_key=os.getenv(
-        "GEMINI_API_KEY"
-    )
-
+    api_key=os.getenv("GEMINI_API_KEY")
 )
 
-model=genai.GenerativeModel(
+model=genai.GenerativeModel("gemini-2.5-flash")
 
-    "gemini-2.5-flash"
+def analyze_portfolio(context):
 
-)
+    prompt=f"""
+You are a portfolio intelligence AI.
 
-def analyze_portfolio( context):
+You have access to:
+1. Portfolio holdings
+2. Market stream analytics
+3. Live risk indicators
 
-    prompt = f"""
-    You are a portfolio intelligence AI.
+Use:
+- monthly_return
+- volatility
+- drawdown
+- signal classification
 
-    You have access to:
+If signal is HIGH_RISK:
+explain downside exposure.
 
-    1. Portfolio holdings
-    2. Market stream analytics
-    3. Live risk indicators
+If signal is BULLISH:
+explain upside momentum.
 
-    Use:
+Do not exaggerate risk.
 
-    - monthly_return
-    - volatility
-    - drawdown
-    - signal classification
+Always remind users to do their own research.
 
-    If signal is HIGH_RISK:
-    explain downside exposure.
+Portfolio Data:
+{context}
+"""
 
-    If signal is BULLISH:
-    explain upside momentum.
+    try:
+        response=model.generate_content(prompt)
+        return response.text
 
-    Do not exaggerate risk.
+    except Exception as e:
 
-    Always remind users to do their own research.
+        print("GEMINI ERROR:",e)
 
-    Portfolio Data:
+        return f"""
+Portfolio processed successfully.
 
-    {context}
-    """
+AI analysis temporarily unavailable.
 
-    response=model.generate_content(prompt)
+Reason:
+{str(e)}
 
-    return response.text
+Portfolio parsing completed.
+Please do your own research before making investment decisions.
+"""

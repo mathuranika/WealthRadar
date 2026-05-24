@@ -10,7 +10,7 @@
       <div class="messages" *ngIf="portfolio.chat().length; else emptyChat">
         <div *ngFor="let message of portfolio.chat()" class="message" [class.user]="message.role === 'user'">
           <span>{{ message.role === 'user' ? 'You' : 'WealthRadar' }}</span>
-          <p>{{ message.text }}</p>
+          <div [innerHTML]="renderMarkdown(message.text)"></div>
         </div>
       </div>
 

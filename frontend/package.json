@@ -22,6 +22,8 @@
     "@fortawesome/fontawesome-free": "^7.2.0",
     "@tabler/icons-webfont": "^3.44.0",
     "angular-plotly.js": "^20.0.0",
+    "dompurify": "^3.4.5",
+    "marked": "^18.0.4",
     "plotly.js-dist-min": "^3.5.1",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0"

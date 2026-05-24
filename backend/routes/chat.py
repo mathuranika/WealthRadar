@@ -1,81 +1,45 @@
-from fastapi import (
-
-    APIRouter,
-
-    Request,
-
-    HTTPException
-
-)
-
+from fastapi import APIRouter
 from pydantic import BaseModel
+from typing import Any,Optional
+from services.gemini_service import model
 
-from services.gemini_service import (
-    analyze_portfolio
-)
+router=APIRouter()
 
-router = APIRouter()
-
-
-class ChatRequest(
-
-    BaseModel
-
-):
-
-    question: str
-
+class ChatRequest(BaseModel):
+    question:str
+    holdings:list[Any]=[]
+    summary:Optional[dict]=None
 
 @router.post("/chat")
+async def chat(req:ChatRequest):
 
-async def chat(
+    prompt=f"""
+        You are WealthRadar.
 
-    req: ChatRequest,
+        Portfolio summary:
+        {req.summary}
 
-    request: Request
+        Holdings:
+        {req.holdings}
 
-):
+        User question:
+        {req.question}
 
-    context = (
+        Instructions:
+        - Use ONLY provided portfolio context.
+        - Do not invent holdings.
+        - Mention diversification/risk when relevant.
+        - Use markdown formatting.
+        - Use headings when useful.
+        - Use bullet points.
+        - Bold important portfolio observations.
+        - Keep answers concise and readable.
+        - End with:
+        Please do your own research before making investment decisions.
+    """
 
-        request.app.state.current_context
-
-    )
-
-    if context is None:
-
-        raise HTTPException(
-
-            status_code=400,
-
-            detail=(
-                "Upload a portfolio first."
-            )
-
-        )
-
-    payload = {
-
-        "question":
-            req.question,
-
-        "portfolio":
-            context
-
-    }
-
-    answer = analyze_portfolio(
-
-        payload
-
-    )
+    response=model.generate_content(prompt)
 
     return {
-
-        "question":
-            req.question,
-
-        "answer":
-            answer
-
+        "answer":response.text
     }
