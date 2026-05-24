@@ -10,13 +10,7 @@ body {
 
 body {
 
-    background:
-
-        radial-gradient(
-            circle at top,
-            #172554 0%,
-            #020617 100%
-        );
+    background: #f4f7fb;
 
     font-family:
 
@@ -24,4 +18,17 @@ body {
         system-ui,
         sans-serif;
 
+    color: #102033;
+
+}
+
+* {
+    box-sizing: border-box;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
 }

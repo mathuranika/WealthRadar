@@ -1,1 +1,113 @@
-<p>dashboard works!</p>
+<section class="page">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Groww-native reasoning layer</p>
+      <h1>Upload your Groww reports. Ask your portfolio anything.</h1>
+      <p class="hero__copy">
+        WealthRadar is a frontend shell for portfolio reasoning across uploads,
+        pipeline status, overlap exposure, weekly concerns, and conversational analysis.
+      </p>
+    </div>
+    <div class="hero__panel" aria-label="Portfolio connection status">
+      <span class="status-dot" [class.active]="portfolio.hasPortfolio()"></span>
+      <div>
+        <strong>{{ portfolio.hasPortfolio() ? 'Portfolio data loaded' : 'Awaiting portfolio data' }}</strong>
+        <small>{{ portfolio.loading() ? 'Loading portfolio service...' : 'Upload reports or connect the API service.' }}</small>
+      </div>
+    </div>
+  </div>
+
+  <app-upload></app-upload>
+
+  <div class="grid">
+    <article class="panel">
+      <div class="panel__head">
+        <div>
+          <p class="eyebrow">Pipeline</p>
+          <h2>Parsing Status</h2>
+        </div>
+      </div>
+
+      <div *ngIf="portfolio.pipeline().length; else emptyPipeline" class="timeline">
+        <div *ngFor="let step of portfolio.pipeline()" class="timeline__item" [class.warning]="step.status === 'warning'">
+          <span></span>
+          <div>
+            <strong>{{ step.label }}</strong>
+            <p>{{ step.detail }}</p>
+          </div>
+          <em>{{ step.count }}</em>
+        </div>
+      </div>
+
+      <ng-template #emptyPipeline>
+        <div class="empty">
+          Pipeline results will appear here after the upload/data service returns parsed report status.
+        </div>
+      </ng-template>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">AI health card</p>
+      <h2>Portfolio Health Summary</h2>
+      <p *ngIf="portfolio.healthSummary(); else emptyHealth" class="summary">
+        {{ portfolio.healthSummary() }}
+      </p>
+      <ng-template #emptyHealth>
+        <div class="empty">No health summary is available yet.</div>
+      </ng-template>
+    </article>
+  </div>
+
+  <article class="panel">
+    <div class="panel__head">
+      <div>
+        <p class="eyebrow">True exposure</p>
+        <h2>Direct + Mutual Fund Overlap</h2>
+      </div>
+    </div>
+
+    <div *ngIf="portfolio.exposures().length; else emptyExposure" class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>Direct</th>
+            <th>MF</th>
+            <th>Combined</th>
+            <th>Risk note</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of portfolio.exposures()" [class.attention]="item.totalPct > 10">
+            <td>
+              <strong>{{ item.company }}</strong>
+              <span>{{ item.symbol }}</span>
+            </td>
+            <td>{{ item.directPct }}%</td>
+            <td>{{ item.mfPct }}%</td>
+            <td>{{ item.totalPct }}%</td>
+            <td>{{ item.note }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <ng-template #emptyExposure>
+      <div class="empty">Overlap rows will render when the portfolio service returns exposure data.</div>
+    </ng-template>
+  </article>
+
+  <article class="panel">
+    <p class="eyebrow">This week</p>
+    <h2>Proactive Concern Summary</h2>
+    <div *ngIf="portfolio.concerns().length; else emptyConcerns" class="concerns">
+      <div *ngFor="let concern of portfolio.concerns()" class="concern" [class]="concern.severity">
+        <strong>{{ concern.title }}</strong>
+        <p>{{ concern.detail }}</p>
+      </div>
+    </div>
+    <ng-template #emptyConcerns>
+      <div class="empty">Weekly concerns will appear after the reasoning service produces them.</div>
+    </ng-template>
+  </article>
+</section>

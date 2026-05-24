@@ -1,1 +1,43 @@
-<p>sentiment works!</p>
+<section class="page">
+  <header>
+    <p class="eyebrow">Macro impact</p>
+    <h1>Market Event Reasoning</h1>
+    <p>Trigger an analysis call that connects current market context to the uploaded portfolio.</p>
+  </header>
+
+  <div class="grid">
+    <article class="panel action">
+      <h2>Run Event Impact Analysis</h2>
+      <p>
+        The frontend calls the macro impact service and displays the returned assessment.
+        No fallback market text is embedded in the client.
+      </p>
+      <button type="button" (click)="analyseMacro()">Analyse macro impact</button>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Assessment</p>
+      <h2>Portfolio Impact</h2>
+      <p *ngIf="portfolio.macroImpact(); else emptyImpact" class="impact">
+        {{ portfolio.macroImpact() }}
+      </p>
+      <ng-template #emptyImpact>
+        <div class="empty">Macro assessment will appear after the service responds.</div>
+      </ng-template>
+    </article>
+  </div>
+
+  <article class="panel">
+    <p class="eyebrow">Affected holdings</p>
+    <h2>Holdings Available To The Reasoning Service</h2>
+    <div *ngIf="portfolio.holdings().length; else emptyHoldings" class="holdings">
+      <div *ngFor="let holding of portfolio.holdings()" class="holding">
+        <strong>{{ holding.name }}</strong>
+        <span>{{ holding.symbol }} · {{ holding.sector }}</span>
+      </div>
+    </div>
+    <ng-template #emptyHoldings>
+      <div class="empty">No holdings have been loaded yet.</div>
+    </ng-template>
+  </article>
+</section>

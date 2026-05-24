@@ -1,1 +1,67 @@
-<p>simulation works!</p>
+<section class="page">
+  <header>
+    <p class="eyebrow">Risk and backtesting</p>
+    <h1>Simulation Workbench</h1>
+    <p>Monte Carlo summaries and what-if benchmarks are rendered from service data only.</p>
+  </header>
+
+  <div class="grid">
+    <article class="panel">
+      <p class="eyebrow">Monte Carlo</p>
+      <h2>12 Month Downside Range</h2>
+      <p *ngIf="portfolio.simulationSummary(); else emptySimulation" class="summary">
+        {{ portfolio.simulationSummary() }}
+      </p>
+      <ng-template #emptySimulation>
+        <div class="empty">Simulation output will appear when the analytics service returns scenario results.</div>
+      </ng-template>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">What-if</p>
+      <h2>Benchmark Comparison</h2>
+      <div *ngIf="portfolio.benchmarks().length; else emptyBenchmarks" class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Instrument</th>
+              <th>Final value</th>
+              <th>Return</th>
+              <th>CAGR</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let benchmark of portfolio.benchmarks()">
+              <td>{{ benchmark.name }}</td>
+              <td>{{ benchmark.finalValue | currency:'INR':'symbol':'1.0-0' }}</td>
+              <td>{{ benchmark.returnPct }}%</td>
+              <td>{{ benchmark.cagr }}%</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <ng-template #emptyBenchmarks>
+        <div class="empty">Benchmark rows will appear after the data service computes comparisons.</div>
+      </ng-template>
+    </article>
+  </div>
+
+  <article class="panel">
+    <p class="eyebrow">SIP analyzer</p>
+    <h2>SIP Performance Versus Nifty</h2>
+    <div *ngIf="portfolio.sips().length; else emptySips" class="sip-grid">
+      <div *ngFor="let sip of portfolio.sips()" class="sip">
+        <strong>{{ sip.fund }}</strong>
+        <span>{{ sip.monthlyAmount | currency:'INR':'symbol':'1.0-0' }} monthly</span>
+        <div>
+          <em>Actual XIRR {{ sip.actualXirr }}%</em>
+          <em>Nifty XIRR {{ sip.niftyXirr }}%</em>
+        </div>
+        <b>{{ sip.verdict }}</b>
+      </div>
+    </div>
+    <ng-template #emptySips>
+      <div class="empty">SIP verdicts are hidden until detected SIP data exists.</div>
+    </ng-template>
+  </article>
+</section>

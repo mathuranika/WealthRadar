@@ -1,1 +1,42 @@
-<p>alerts works!</p>
+<section class="page">
+  <header>
+    <p class="eyebrow">Responsible export</p>
+    <h1>Weekly Alerts And Session Summary</h1>
+    <p>Concern cards and export state are populated from the portfolio service.</p>
+  </header>
+
+  <article class="panel disclaimer">
+    <i class="ti ti-shield-check" aria-hidden="true"></i>
+    <p>WealthRadar is not a SEBI-registered investment advisor. All analysis is for educational purposes only.</p>
+  </article>
+
+  <div class="grid">
+    <article class="panel">
+      <p class="eyebrow">Concern queue</p>
+      <h2>This Week</h2>
+      <div *ngIf="portfolio.concerns().length; else emptyConcerns" class="concerns">
+        <div *ngFor="let concern of portfolio.concerns()" class="concern" [class]="concern.severity">
+          <strong>{{ concern.title }}</strong>
+          <p>{{ concern.detail }}</p>
+        </div>
+      </div>
+      <ng-template #emptyConcerns>
+        <div class="empty">No concern cards are available yet.</div>
+      </ng-template>
+    </article>
+
+    <article class="panel">
+      <p class="eyebrow">Export preview</p>
+      <h2>Session Artefact</h2>
+      <div *ngIf="portfolio.hasPortfolio(); else emptyExport" class="export-list">
+        <span>Pipeline rows: {{ portfolio.pipeline().length }}</span>
+        <span>Holdings: {{ portfolio.holdings().length }}</span>
+        <span>Overlap rows: {{ portfolio.exposures().length }}</span>
+        <span>Chat turns: {{ portfolio.chat().length }}</span>
+      </div>
+      <ng-template #emptyExport>
+        <div class="empty">Export controls can be enabled once portfolio data exists.</div>
+      </ng-template>
+    </article>
+  </div>
+</section>

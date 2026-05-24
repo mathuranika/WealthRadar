@@ -1,1 +1,51 @@
-<p>insights works!</p>
+<section class="page">
+  <header class="page__header">
+    <p class="eyebrow">Conversational reasoning</p>
+    <h1>Chat With Your Portfolio</h1>
+    <p>Questions are sent through the portfolio service and rendered only from connected reasoning responses.</p>
+  </header>
+
+  <div class="layout">
+    <article class="panel chat">
+      <div class="messages" *ngIf="portfolio.chat().length; else emptyChat">
+        <div *ngFor="let message of portfolio.chat()" class="message" [class.user]="message.role === 'user'">
+          <span>{{ message.role === 'user' ? 'You' : 'WealthRadar' }}</span>
+          <p>{{ message.text }}</p>
+        </div>
+      </div>
+
+      <ng-template #emptyChat>
+        <div class="empty">Ask a question once portfolio context is available.</div>
+      </ng-template>
+
+      <form class="composer" (ngSubmit)="ask()">
+        <textarea
+          [ngModel]="question()"
+          (ngModelChange)="question.set($event)"
+          name="question"
+          rows="3"
+          placeholder="Ask about risk, overlap, SIPs, macro impact, or weekly changes"
+        ></textarea>
+        <button type="submit" [disabled]="!question().trim()">Ask</button>
+      </form>
+    </article>
+
+    <aside class="panel">
+      <p class="eyebrow">Context</p>
+      <h2>Connected Data</h2>
+      <div class="metric">
+        <span>Holdings</span>
+        <strong>{{ portfolio.holdings().length }}</strong>
+      </div>
+      <div class="metric">
+        <span>Overlap rows</span>
+        <strong>{{ portfolio.exposures().length }}</strong>
+      </div>
+      <div class="metric">
+        <span>Concern bullets</span>
+        <strong>{{ portfolio.concerns().length }}</strong>
+      </div>
+      <p class="note" *ngIf="portfolio.error()">{{ portfolio.error() }}</p>
+    </aside>
+  </div>
+</section>

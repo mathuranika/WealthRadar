@@ -10,7 +10,7 @@ import { ApiService } from '../../core/services/api';
   styleUrl: './upload.scss',
 })
 export class UploadComponent {
-  selectedFile: File | null = null;
+  selectedFiles: File[] = [];
   isLoading = false;
   errorMessage = '';
   isDragging = false;
@@ -20,7 +20,7 @@ export class UploadComponent {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     if (input.files?.length) {
-      this.setFile(input.files[0]);
+      this.setFiles(Array.from(input.files));
     }
   }
 
@@ -36,28 +36,45 @@ export class UploadComponent {
   onDrop(event: DragEvent): void {
     event.preventDefault();
     this.isDragging = false;
-    const file = event.dataTransfer?.files?.[0];
-    if (file) {
-      if (!file.name.endsWith('.csv')) {
-        this.errorMessage = 'Only .csv files are supported.';
-        return;
-      }
-      this.setFile(file);
+    const files = Array.from(event.dataTransfer?.files ?? []);
+    if (files.length) {
+      this.setFiles(files);
     }
   }
 
-  private setFile(file: File): void {
-    this.selectedFile = file;
+  private setFiles(files: File[]): void {
+    const validFiles = files.filter((file) => this.isSupported(file));
+
+    if (validFiles.length !== files.length) {
+      this.errorMessage = 'Upload CSV or PDF reports only.';
+      return;
+    }
+
+    if (validFiles.length > 3) {
+      this.errorMessage = 'Upload up to 3 Groww reports.';
+      return;
+    }
+
+    this.selectedFiles = validFiles;
     this.errorMessage = '';
   }
 
+  private isSupported(file: File): boolean {
+    const name = file.name.toLowerCase();
+    return name.endsWith('.csv') || name.endsWith('.pdf');
+  }
+
+  removeFile(fileToRemove: File): void {
+    this.selectedFiles = this.selectedFiles.filter((file) => file !== fileToRemove);
+  }
+
   uploadPortfolio(): void {
-    if (!this.selectedFile) return;
+    if (!this.selectedFiles.length) return;
 
     this.isLoading = true;
     this.errorMessage = '';
 
-    this.apiService.uploadCSV(this.selectedFile).subscribe({
+    this.apiService.uploadReports(this.selectedFiles).subscribe({
       next: (response) => {
         this.isLoading = false;
         console.log('Upload success:', response);

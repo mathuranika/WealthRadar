@@ -7,7 +7,7 @@ import { HttpClient } from '@angular/common/http';
 export class ApiService {
 
   private baseUrl =
-    'http://localhost:8000';
+    '/api';
 
   constructor(
     private http: HttpClient
@@ -22,6 +22,25 @@ export class ApiService {
       'file',
       file
     );
+
+    return this.http.post(
+      `${this.baseUrl}/upload`,
+      formData
+    );
+
+  }
+
+  uploadReports(files: File[]) {
+
+    const formData =
+      new FormData();
+
+    files.forEach((file) => {
+      formData.append(
+        'files',
+        file
+      );
+    });
 
     return this.http.post(
       `${this.baseUrl}/upload`,

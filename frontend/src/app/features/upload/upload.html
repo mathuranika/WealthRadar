@@ -3,26 +3,20 @@
 
     <div class="upload-card__header">
       <div class="upload-card__icon-wrap" aria-hidden="true">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <line x1="8" y1="13" x2="16" y2="13"/>
-          <line x1="8" y1="17" x2="16" y2="17"/>
-          <line x1="8" y1="9" x2="10" y2="9"/>
-        </svg>
+        <i class="ti ti-cloud-upload" aria-hidden="true"></i>
       </div>
       <div>
-        <h2 class="upload-card__title">Upload Portfolio</h2>
+        <p class="upload-card__eyebrow">Report ingestion</p>
+        <h2 class="upload-card__title">Upload Groww Reports</h2>
         <p class="upload-card__subtitle">
-          Upload your Groww portfolio and let WealthRadar analyse
-          market risk, sentiment, and portfolio intelligence.
+          Add holdings, mutual fund statement, and P&amp;L exports. Each file is passed to the data service for parsing.
         </p>
       </div>
     </div>
 
     <div
       class="upload-dropzone"
-      [class.has-file]="selectedFile"
+      [class.has-file]="selectedFiles.length"
       [class.drag-over]="isDragging"
       (dragover)="onDragOver($event)"
       (dragleave)="onDragLeave()"
@@ -36,32 +30,36 @@
       <input
         #fileInput
         type="file"
-        accept=".csv"
+        accept=".csv,.pdf"
+        multiple
         (change)="onFileSelected($event)"
         class="upload-dropzone__input"
       />
 
-      <ng-container *ngIf="!selectedFile">
-        <svg class="upload-dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"/>
-          <path d="M12 12v9"/>
-          <path d="m16 16-4-4-4 4"/>
-        </svg>
+      <ng-container *ngIf="!selectedFiles.length">
+        <i class="ti ti-file-upload upload-dropzone__icon" aria-hidden="true"></i>
         <p class="upload-dropzone__text">Drag & drop your CSV here</p>
-        <p class="upload-dropzone__hint">or click to browse — .csv files only</p>
+        <p class="upload-dropzone__hint">or click to browse CSV/PDF reports, maximum 3 files</p>
       </ng-container>
 
-      <ng-container *ngIf="selectedFile">
-        <svg class="upload-dropzone__icon is-ready" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-          <polyline points="14 2 14 8 20 8"/>
-          <path d="m9 15 2 2 4-4"/>
-        </svg>
-        <p class="upload-dropzone__text is-ready">{{ selectedFile.name }}</p>
-        <p class="upload-dropzone__hint">
-          {{ (selectedFile.size / 1024).toFixed(1) }} KB &nbsp;·&nbsp; Click to change
-        </p>
+      <ng-container *ngIf="selectedFiles.length">
+        <i class="ti ti-circle-check upload-dropzone__icon is-ready" aria-hidden="true"></i>
+        <p class="upload-dropzone__text is-ready">{{ selectedFiles.length }} report{{ selectedFiles.length > 1 ? 's' : '' }} ready</p>
+        <p class="upload-dropzone__hint">Click to replace the selected files</p>
       </ng-container>
+    </div>
+
+    <div *ngIf="selectedFiles.length" class="upload-files">
+      <div *ngFor="let file of selectedFiles" class="upload-file">
+        <i class="ti ti-file-analytics" aria-hidden="true"></i>
+        <div>
+          <strong>{{ file.name }}</strong>
+          <span>{{ (file.size / 1024).toFixed(1) }} KB</span>
+        </div>
+        <button type="button" (click)="removeFile(file)" aria-label="Remove file">
+          <i class="ti ti-x" aria-hidden="true"></i>
+        </button>
+      </div>
     </div>
 
     <div class="upload-card__footer">
@@ -73,11 +71,11 @@
       <button
         class="upload-btn"
         [class.is-loading]="isLoading"
-        [disabled]="!selectedFile || isLoading"
+        [disabled]="!selectedFiles.length || isLoading"
         (click)="uploadPortfolio()"
       >
         <i class="ti ti-chart-dots-3" aria-hidden="true"></i>
-        <span>{{ isLoading ? 'Analysing…' : 'Analyse Portfolio' }}</span>
+        <span>{{ isLoading ? 'Analysing...' : 'Analyse Portfolio' }}</span>
         <span *ngIf="isLoading" class="upload-btn__spinner" aria-hidden="true"></span>
       </button>
     </div>

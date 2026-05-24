@@ -1,13 +1,13 @@
 // ── Variables ──────────────────────────────────────────────────────────────
 $nav-height:      70px;
-$nav-bg:          #07101f;
-$nav-bg-scrolled: rgba(7, 16, 31, 0.92);
-$border-color:    rgba(255, 255, 255, 0.07);
-$text-primary:    #f0f4ff;
-$text-muted:      rgba(200, 210, 230, 0.55);
-$text-hover:      #ffffff;
-$accent-from:     #5b5ef4;
-$accent-to:       #3b82f6;
+$nav-bg:          rgba(255, 255, 255, 0.96);
+$nav-bg-scrolled: rgba(255, 255, 255, 0.92);
+$border-color:    #dfe7f0;
+$text-primary:    #102033;
+$text-muted:      #607087;
+$text-hover:      #0f172a;
+$accent-from:     #2563eb;
+$accent-to:       #0891b2;
 $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
 // ── Navbar shell ───────────────────────────────────────────────────────────
@@ -25,7 +25,7 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
     background: $nav-bg-scrolled;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
-    box-shadow: 0 1px 24px rgba(0, 0, 0, 0.45);
+    box-shadow: 0 8px 30px rgba(30, 48, 70, 0.1);
   }
 }
 
@@ -79,13 +79,13 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
   font-size: 17px;    // was 15px
   font-weight: 700;
   color: $text-primary;
-  letter-spacing: -0.3px;
+  letter-spacing: 0;
 }
 
 .navbar__sub {
   font-size: 11px;    // was 10px
   color: $text-muted;
-  letter-spacing: 0.2px;
+  letter-spacing: 0;
   margin-top: 2px;
 }
 
@@ -104,7 +104,7 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
     inset-inline: 0;
     flex-direction: column;
     align-items: stretch;
-    background: rgba(7, 16, 31, 0.97);
+    background: rgba(255, 255, 255, 0.98);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     border-bottom: 1px solid $border-color;
@@ -143,12 +143,12 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:hover {
     color: $text-hover;
-    background: rgba(255, 255, 255, 0.06);
+    background: #eef5ff;
   }
 
   &.active {
     color: $text-primary;
-    background: rgba(91, 94, 244, 0.15);
+    background: #dbeafe;
   }
 
   @media (max-width: 700px) {
@@ -172,9 +172,9 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
   gap: 6px;
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1px solid rgba(91, 94, 244, 0.5);
-  background: rgba(91, 94, 244, 0.12);
-  color: #a5a8ff;
+  border: 1px solid #bfdbfe;
+  background: #eff6ff;
+  color: #2563eb;
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -184,9 +184,9 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
   i { font-size: 14px; }
 
   &:hover {
-    background: rgba(91, 94, 244, 0.25);
-    border-color: rgba(91, 94, 244, 0.8);
-    color: #d0d2ff;
+    background: #dbeafe;
+    border-color: #93c5fd;
+    color: #1d4ed8;
   }
 
   @media (max-width: 480px) {
@@ -219,7 +219,7 @@ $transition:      0.22s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   &:hover {
-    background: rgba(255, 255, 255, 0.06);
+    background: #eef5ff;
     span { background: $text-primary; }
   }
 
