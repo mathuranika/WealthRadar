@@ -207,15 +207,3 @@ Refer to `.env.example` for required/optional keys.
 3. **Configure environment variables** by creating and editing `.env`.
 4. **Run the backend and frontend servers.**
 5. **Access the dashboard** at [http://localhost:4200](http://localhost:4200).
-
----
-
-## Screenshots
-
-_Add screenshots of the dashboard, portfolio upload, alerts, and chat here if desired._
-
----
-
-## Demo Video
-
-[Link to demo video will go here]
